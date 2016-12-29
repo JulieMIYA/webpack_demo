@@ -4,11 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "stats": "webpack --env build --profile --json > stats.json",
     "start": "webpack-dev-server --env start",
     "deploy": "gh-pages -d build",
-    "build": "webpack --env build",
-    "stats": "webpack --env build --profile --json > stats.json"
+    "build": "webpack --env build"
   },
   "keywords": [],
   "author": "",
