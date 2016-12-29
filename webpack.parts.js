@@ -1,7 +1,14 @@
 const webpack = require('webpack');
 const path = require('path');
+
+//remove old hashed files from the last build
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+
+//separate css file from js files in production mode
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
+//strip unused css from giant css framework
+const PurifyCSSPlugin = require('purifycss-webpack-plugin');
 
 
 exports.devServer = function(options) {
@@ -36,6 +43,11 @@ exports.setupCSS = function(paths) {
                 {
                     test: /\.sass$/,
                     use: ['style-loader', 'css-loader', 'sass-loader'],
+                    include: paths
+                },
+                {
+                    test: /\.css$/,
+                    use: ['style-loader', 'css-loader'],
                     include: paths
                 }
             ]
@@ -94,6 +106,7 @@ exports.clean = function(path) {
     };
 }
 
+//should not use ExtractTextPlugin for development configuration.
 exports.extractCSS = function(paths) {
     return {
         module: {
@@ -106,6 +119,14 @@ exports.extractCSS = function(paths) {
                         loader: 'css-loader!sass-loader'
                     }),
                     include: paths
+                },
+                {
+                    test: /\.css$/,
+                    loader: ExtractTextPlugin.extract({
+                        fallbackLoader: 'style-loader',
+                        loader: 'css-loader'
+                    }),
+                    include: paths
                 }
             ]
         },
@@ -115,4 +136,20 @@ exports.extractCSS = function(paths) {
         ]
     };
 }
-//should not use ExtractTextPlugin for development configuration.
+
+exports.purifyCSS = function(paths) {
+    return {
+        plugins:[
+            new PurifyCSSPlugin(
+                {
+                    basePath: process.cwd(),
+                    // `paths` is used to point PurifyCSS to files not
+                    // visible to Webpack. This expects glob patterns so
+                    // we adapt here.
+                    paths: paths.map( path => `${path}/*`),
+                    resolveExtensions: ['.html']
+                }
+            )
+        ]
+    }
+}

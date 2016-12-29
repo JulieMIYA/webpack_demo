@@ -7,7 +7,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const PATHS = {
     app: path.join(__dirname, 'app'),
     build: path.join(__dirname, 'build'),
-    style: path.join(__dirname, 'app', 'main.sass')
+    style: [
+        path.join(__dirname, 'node_modules', 'purecss'),
+        path.join(__dirname, 'app', 'main.sass')
+    ]
 };
 const common = merge(
     {
@@ -59,7 +62,8 @@ module.exports = function(env) {
                     filename: '[name].[chunkhash].js',
                     // This is used for code splitting. The setup
                     // will work without but this is useful to set.
-                    chunkFilename: '[chunkhash].js'
+                    chunkFilename: '[chunkhash].js',
+                    publicPath: '/webpack-demo/'
                 }
             },
             parts.clean(PATHS.build),
@@ -68,7 +72,8 @@ module.exports = function(env) {
                 'production'
             ),
             parts.minify(),
-            parts.extractCSS(PATHS.style)
+            parts.extractCSS(PATHS.style),
+            parts.purifyCSS([PATHS.app])
         );
     }
     return merge(

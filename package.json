@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --env start",
-    "build": "webpack --env build"
+    "deploy": "gh-pages -d build",
+    "build": "webpack --env build",
+    "stats": "webpack --env build --profile --json > stats.json"
   },
   "keywords": [],
   "author": "",
@@ -17,8 +19,10 @@
     "clean-webpack-plugin": "^0.1.14",
     "css-loader": "^0.26.1",
     "extract-text-webpack-plugin": "^2.0.0-beta.4",
+    "gh-pages": "^0.12.0",
     "html-webpack-plugin": "^2.24.1",
     "node-sass": "^4.1.1",
+    "purifycss-webpack-plugin": "^2.0.3",
     "react": "^15.4.1",
     "sass-loader": "^4.1.1",
     "style-loader": "^0.13.1",
@@ -26,5 +30,7 @@
     "webpack-dev-server": "^2.2.0-rc.0",
     "webpack-merge": "^2.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "purecss": "^0.6.1"
+  }
 }
