@@ -6,19 +6,14 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const PATHS = {
     app: path.join(__dirname, 'app'),
-    build: path.join(__dirname, 'build')
+    build: path.join(__dirname, 'build'),
+    style: path.join(__dirname, 'app', 'main.sass')
 };
 const common = merge(
     {
         entry: {
-            app: PATHS.app
-        },
-        output: {
-            path: PATHS.build,
-            filename: '[name].js',
-            // This is used for code splitting. The setup
-            // will work without but this is useful to set.
-            //chunkFilename: '[chunkhash].js'
+            app: PATHS.app,
+            style: PATHS.style
         },
         plugins: [
             new HtmlWebpackPlugin({ title: 'Webpack demo Application'})
@@ -57,23 +52,39 @@ module.exports = function(env) {
     if (env === 'build') {
         return merge(
             common,
+            {
+                devtool: 'source-map',
+                output: {
+                    path: PATHS.build,
+                    filename: '[name].[chunkhash].js',
+                    // This is used for code splitting. The setup
+                    // will work without but this is useful to set.
+                    chunkFilename: '[chunkhash].js'
+                }
+            },
+            parts.clean(PATHS.build),
             parts.setFreeVariable(
                 'process.env.NODE_ENV',
                 'production'
             ),
             parts.minify(),
-            parts.setupCSS(PATHS.app)
+            parts.extractCSS(PATHS.style)
         );
     }
     return merge(
         common,
         {
+            devtool: 'eval-source-map',
             // Disable performance hints during development
             performance: {
                 hints: false
+            },
+            output: {
+                path: PATHS.build,
+                filename: '[name].js'
             }
         },
-        parts.setupCSS(PATHS.app),
+        parts.setupCSS(PATHS.style),
         parts.devServer({
             path: PATHS.build,
             port: 8080

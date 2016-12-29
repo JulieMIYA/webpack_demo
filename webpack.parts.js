@@ -1,6 +1,8 @@
 const webpack = require('webpack');
 const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
 
 exports.devServer = function(options) {
     return {
@@ -91,3 +93,26 @@ exports.clean = function(path) {
         ]
     };
 }
+
+exports.extractCSS = function(paths) {
+    return {
+        module: {
+            rules: [
+                // Extract CSS during build
+                {
+                    test: /\.sass$/,
+                    loader: ExtractTextPlugin.extract({
+                        fallbackLoader: 'style-loader',
+                        loader: 'css-loader!sass-loader'
+                    }),
+                    include: paths
+                }
+            ]
+        },
+        plugins: [
+            // Output extracted CSS to a file
+            new ExtractTextPlugin('[name].[chunkhash].css')
+        ]
+    };
+}
+//should not use ExtractTextPlugin for development configuration.
